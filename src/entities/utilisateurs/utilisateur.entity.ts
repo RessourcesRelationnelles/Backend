@@ -18,6 +18,9 @@ export class Utilisateur {
   @Column({ length: 100 })
   nom: string;
 
+  @Column({ length: 100 })
+  prenom: string;
+
   @Column({ length: 100, unique: true })
   email: string;
 

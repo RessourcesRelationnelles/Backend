@@ -24,6 +24,7 @@ var Role;
 let Utilisateur = class Utilisateur {
     id;
     nom;
+    prenom;
     email;
     mot_de_passe;
     role;
@@ -41,6 +42,10 @@ __decorate([
     (0, typeorm_1.Column)({ length: 100 }),
     __metadata("design:type", String)
 ], Utilisateur.prototype, "nom", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ length: 100 }),
+    __metadata("design:type", String)
+], Utilisateur.prototype, "prenom", void 0);
 __decorate([
     (0, typeorm_1.Column)({ length: 100, unique: true }),
     __metadata("design:type", String)

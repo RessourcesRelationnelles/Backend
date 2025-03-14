@@ -10,6 +10,7 @@ export declare enum Role {
 export declare class Utilisateur {
     id: number;
     nom: string;
+    prenom: string;
     email: string;
     mot_de_passe: string;
     role: Role;

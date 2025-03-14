@@ -29,6 +29,20 @@ let UsersService = class UsersService {
         const user = this.usersRepository.create(userData);
         return this.usersRepository.save(user);
     }
+    async update(id, updateData) {
+        const user = await this.usersRepository.findOne({ where: { id } });
+        if (!user) {
+            throw new common_1.NotFoundException(`Utilisateur avec l'ID ${id} non trouvé`);
+        }
+        Object.assign(user, updateData);
+        return this.usersRepository.save(user);
+    }
+    async delete(id) {
+        const result = await this.usersRepository.delete(id);
+        if (result.affected === 0) {
+            throw new common_1.NotFoundException(`Utilisateur avec l'ID ${id} non trouvé`);
+        }
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
