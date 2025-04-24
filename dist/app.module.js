@@ -10,13 +10,9 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
-const utilisateur_entity_1 = require("./entities/utilisateurs/utilisateur.entity");
-const categorie_entity_1 = require("./entities/categories/categorie.entity");
-const ressource_entity_1 = require("./entities/ressources/ressource.entity");
-const commentaire_entity_1 = require("./entities/commentaires/commentaire.entity");
-const favori_entity_1 = require("./entities/favoris/favori.entity");
-const statistique_entity_1 = require("./entities/statistiques/statistique.entity");
-const utilisateur_module_1 = require("./modules/utilisateur.module");
+const auth_module_1 = require("./auth/auth.module");
+const user_module_1 = require("./user/user.module");
+const user_entity_1 = require("./user/user.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -26,16 +22,17 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot(),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'mysql',
-                host: 'localhost',
-                port: 3306,
-                username: 'theo',
-                password: '1234',
-                database: 'RessourceRelationnelles',
-                entities: [utilisateur_entity_1.Utilisateur, categorie_entity_1.Categorie, ressource_entity_1.Ressource, commentaire_entity_1.Commentaire, favori_entity_1.Favori, statistique_entity_1.Statistique],
+                host: process.env.DB_HOST,
+                port: Number(process.env.DB_PORT),
+                username: process.env.DB_USER,
+                password: process.env.DB_PASS,
+                database: process.env.DB_NAME,
+                entities: [user_entity_1.User],
                 synchronize: false,
                 autoLoadEntities: true
             }),
-            utilisateur_module_1.UsersModule,
+            auth_module_1.AuthModule,
+            user_module_1.UserModule,
         ],
     })
 ], AppModule);

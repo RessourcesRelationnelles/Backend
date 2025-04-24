@@ -1,30 +1,26 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-
-import { Utilisateur } from './entities/utilisateurs/utilisateur.entity';
-import { Categorie } from './entities/categories/categorie.entity';
-import { Ressource } from './entities/ressources/ressource.entity';
-import { Commentaire } from './entities/commentaires/commentaire.entity';
-import { Favori } from './entities/favoris/favori.entity';
-import { Statistique } from './entities/statistiques/statistique.entity';
-import { UsersModule } from './modules/utilisateur.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { User } from './user/user.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'theo',
-      password: '1234',
-      database: 'RessourceRelationnelles',
-      entities: [Utilisateur, Categorie, Ressource, Commentaire, Favori, Statistique],
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USER,
+      password: process.env.DB_PASS,
+      database: process.env.DB_NAME,
+      entities: [User],
       synchronize: false,
       autoLoadEntities: true
     }),
-    UsersModule,
+    AuthModule,
+    UserModule,
   ],
 })
 export class AppModule {}
