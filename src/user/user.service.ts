@@ -19,9 +19,6 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return this.userRepository.findOne({ where: { id } });
-  }
 
   findByString(email: string) {
     return this.userRepository.findOne({ where: { email } });

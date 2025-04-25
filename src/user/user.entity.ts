@@ -9,13 +9,13 @@ export enum Role {
 
 @Entity('Utilisateurs')
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid') 
+  id: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: true })
   nom: string;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, nullable: true })
   prenom: string;
 
   @Column({ length: 100, unique: true })
@@ -24,7 +24,7 @@ export class User {
   @Column()
   mot_de_passe: string;
 
-  @Column({ type: 'enum', enum: Role })
+  @Column({ type: 'enum', enum: Role, default: Role.CITOYEN })
   role: Role;
 
   @CreateDateColumn({ name: 'date_creation' })

@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put, NotFoundException, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiResponse, ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { ApiResponse, ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { UserUpdateDto } from './user.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -14,6 +15,14 @@ export class UserController {
     findAll() {
         return this.userService.findAll();
     }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Get('me')
+    getProfile(@Req() req) {
+        return req.user; 
+    }
+
 
     @Get('email/:email')
     @ApiOperation({ summary: 'Récupérer un utilisateur par email' })

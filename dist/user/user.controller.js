@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const swagger_1 = require("@nestjs/swagger");
 const user_dto_1 = require("./user.dto");
+const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 let UserController = class UserController {
     userService;
     constructor(userService) {
@@ -24,6 +25,9 @@ let UserController = class UserController {
     }
     findAll() {
         return this.userService.findAll();
+    }
+    getProfile(req) {
+        return req.user;
     }
     async findByEmail(email) {
         const user = await this.userService.findByString(email);
@@ -52,6 +56,15 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "findAll", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('me'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "getProfile", null);
 __decorate([
     (0, common_1.Get)('email/:email'),
     (0, swagger_1.ApiOperation)({ summary: 'Récupérer un utilisateur par email' }),

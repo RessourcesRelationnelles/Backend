@@ -29,15 +29,15 @@ let User = class User {
 };
 exports.User = User;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
-    __metadata("design:type", Number)
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
+    __metadata("design:type", String)
 ], User.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 100 }),
+    (0, typeorm_1.Column)({ length: 100, nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "nom", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 100 }),
+    (0, typeorm_1.Column)({ length: 100, nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "prenom", void 0);
 __decorate([
@@ -49,7 +49,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "mot_de_passe", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: Role }),
+    (0, typeorm_1.Column)({ type: 'enum', enum: Role, default: Role.CITOYEN }),
     __metadata("design:type", String)
 ], User.prototype, "role", void 0);
 __decorate([

@@ -29,9 +29,6 @@ let UserService = class UserService {
     findAll() {
         return this.userRepository.find();
     }
-    findOne(id) {
-        return this.userRepository.findOne({ where: { id } });
-    }
     findByString(email) {
         return this.userRepository.findOne({ where: { email } });
     }

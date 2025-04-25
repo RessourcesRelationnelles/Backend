@@ -5,7 +5,6 @@ export declare class UserService {
     constructor(userRepository: Repository<User>);
     create(userData: Partial<User>): Promise<User>;
     findAll(): Promise<User[]>;
-    findOne(id: number): Promise<User | null>;
     findByString(email: string): Promise<User | null>;
     update(id: number, userData: Partial<User>): Promise<import("typeorm").UpdateResult>;
     remove(id: number): Promise<import("typeorm").DeleteResult>;
