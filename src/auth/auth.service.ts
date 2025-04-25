@@ -1,7 +1,7 @@
 // auth.service.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
+import * as bcryptjs from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../user/user.entity';
@@ -16,7 +16,7 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.userRepo.findOne({ where: { email } });
-    if (user && await bcrypt.compare(pass, user.mot_de_passe)) {
+    if (user && await bcryptjs.compare(pass, user.mot_de_passe)) {
       const { mot_de_passe, ...result } = user;
       return result;
     }
@@ -34,7 +34,7 @@ export class AuthService {
     if (!data.mot_de_passe) {
       throw new Error('Password is required');
     }
-    const hashed = await bcrypt.hash(data.mot_de_passe, 10);
+    const hashed = await bcryptjs.hash(data.mot_de_passe, 10);
     const user = this.userRepo.create({ ...data, mot_de_passe: hashed });
     return this.userRepo.save(user);
   }
