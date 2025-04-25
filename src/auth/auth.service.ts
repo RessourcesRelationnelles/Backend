@@ -1,7 +1,7 @@
 // auth.service.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../user/user.entity';
@@ -31,6 +31,9 @@ export class AuthService {
   }
 
   async register(data: Partial<User>) {
+    if (!data.mot_de_passe) {
+      throw new Error('Password is required');
+    }
     const hashed = await bcrypt.hash(data.mot_de_passe, 10);
     const user = this.userRepo.create({ ...data, mot_de_passe: hashed });
     return this.userRepo.save(user);
