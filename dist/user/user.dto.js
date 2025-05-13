@@ -14,7 +14,10 @@ const swagger_1 = require("@nestjs/swagger");
 const user_entity_1 = require("../user/user.entity");
 class UserUpdateDto {
     email;
-    mot_de_passe;
+    pseudo;
+    bio;
+    photoDeProfil;
+    password;
     nom;
     prenom;
     role;
@@ -27,7 +30,19 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     __metadata("design:type", String)
-], UserUpdateDto.prototype, "mot_de_passe", void 0);
+], UserUpdateDto.prototype, "pseudo", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", String)
+], UserUpdateDto.prototype, "bio", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", String)
+], UserUpdateDto.prototype, "photoDeProfil", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], UserUpdateDto.prototype, "password", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     __metadata("design:type", String)

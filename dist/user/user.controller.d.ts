@@ -6,6 +6,6 @@ export declare class UserController {
     findAll(): Promise<import("./user.entity").User[]>;
     getProfile(req: any): any;
     findByEmail(email: string): Promise<import("./user.entity").User>;
-    update(id: number, body: UserUpdateDto): Promise<import("typeorm").UpdateResult>;
+    updateMe(req: any, body: UserUpdateDto): Promise<import("typeorm").UpdateResult>;
     remove(id: number): Promise<import("typeorm").DeleteResult>;
 }

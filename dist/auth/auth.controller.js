@@ -23,7 +23,7 @@ let AuthController = class AuthController {
         this.authService = authService;
     }
     async login(body) {
-        const user = await this.authService.validateUser(body.email, body.mot_de_passe);
+        const user = await this.authService.validateUser(body.email, body.password);
         if (!user)
             throw new common_1.UnauthorizedException('Identifiants invalides');
         return this.authService.login(user);

@@ -14,9 +14,9 @@ const swagger_1 = require("@nestjs/swagger");
 const user_entity_1 = require("../user/user.entity");
 class AuthRegisterDto {
     email;
-    mot_de_passe;
-    nom;
-    prenom;
+    password;
+    name;
+    firstName;
     role;
 }
 exports.AuthRegisterDto = AuthRegisterDto;
@@ -27,22 +27,22 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], AuthRegisterDto.prototype, "mot_de_passe", void 0);
+], AuthRegisterDto.prototype, "password", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     __metadata("design:type", String)
-], AuthRegisterDto.prototype, "nom", void 0);
+], AuthRegisterDto.prototype, "name", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     __metadata("design:type", String)
-], AuthRegisterDto.prototype, "prenom", void 0);
+], AuthRegisterDto.prototype, "firstName", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ enum: user_entity_1.Role, required: false }),
+    (0, swagger_1.ApiProperty)({ enum: user_entity_1.Role, required: false, default: user_entity_1.Role.CITOYEN }),
     __metadata("design:type", String)
 ], AuthRegisterDto.prototype, "role", void 0);
 class AuthLoginDto {
     email;
-    mot_de_passe;
+    password;
 }
 exports.AuthLoginDto = AuthLoginDto;
 __decorate([
@@ -52,5 +52,5 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], AuthLoginDto.prototype, "mot_de_passe", void 0);
+], AuthLoginDto.prototype, "password", void 0);
 //# sourceMappingURL=auth.dto.js.map

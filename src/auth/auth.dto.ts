@@ -6,15 +6,15 @@ export class AuthRegisterDto {
   email: string;
 
   @ApiProperty()
-  mot_de_passe: string;
+  password: string;
 
   @ApiProperty({ required: false })
-  nom?: string;
+  name?: string;
 
   @ApiProperty({ required: false })
-  prenom?: string;
+  firstName?: string;
 
-  @ApiProperty({ enum: Role, required: false })
+  @ApiProperty({ enum: Role, required: false, default: Role.CITOYEN })
   role?: Role;
 }
 
@@ -23,6 +23,6 @@ export class AuthLoginDto {
     email: string;
   
     @ApiProperty()
-    mot_de_passe: string;
+    password: string;
   }
   

@@ -34,15 +34,20 @@ export class UserController {
         return user;
     }
     
-    @Put(':id')
-    @ApiOperation({ summary: 'Mettre à jour un utilisateur avec son ID' })
-    async update(@Param('id', ParseIntPipe) id: number, @Body() body: UserUpdateDto) {
-        const updatedUser = await this.userService.update(id, body);
-        if (!updatedUser) {
-            throw new NotFoundException("Impossible de mettre à jour l'utilisateur");
-        }
-        return updatedUser;
+    @UseGuards(JwtAuthGuard)
+    @Put('me')
+    @ApiOperation({ summary: 'Mettre à jour les infos de mon compte' })
+    async updateMe(@Req() req, @Body() body: UserUpdateDto) {
+    const userId = req.user.sub; // <-- JWT contient le user ID
+    const updatedUser = await this.userService.update(userId, body);
+
+    if (!updatedUser) {
+        throw new NotFoundException("Impossible de mettre à jour l'utilisateur");
     }
+
+    return updatedUser;
+    }
+
 
     @Delete(':id')
     @ApiOperation({ summary: 'Supprimer un utilisateur avec son ID' })

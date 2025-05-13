@@ -9,5 +9,8 @@ export declare class AuthService {
     login(user: any): Promise<{
         access_token: string;
     }>;
-    register(data: Partial<User>): Promise<User>;
+    generateToken(user: User): string;
+    register(data: Partial<User>): Promise<{
+        access_token: string;
+    }>;
 }

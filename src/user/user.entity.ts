@@ -13,16 +13,25 @@ export class User {
   id: string;
 
   @Column({ length: 100, nullable: true })
-  nom: string;
+  pseudo: string;
 
   @Column({ length: 100, nullable: true })
-  prenom: string;
+  bio: string;
+
+  @Column({ nullable: true })
+  photoDeProfil: string;
+
+  @Column({ length: 100, nullable: true })
+  name: string;
+
+  @Column({ length: 100, nullable: true })
+  firstName: string;
 
   @Column({ length: 100, unique: true })
   email: string;
 
   @Column()
-  mot_de_passe: string;
+  password: string;
 
   @Column({ type: 'enum', enum: Role, default: Role.CITOYEN })
   role: Role;

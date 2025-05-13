@@ -20,10 +20,13 @@ var Role;
 })(Role || (exports.Role = Role = {}));
 let User = class User {
     id;
-    nom;
-    prenom;
+    pseudo;
+    bio;
+    photoDeProfil;
+    name;
+    firstName;
     email;
-    mot_de_passe;
+    password;
     role;
     dateCreation;
 };
@@ -35,11 +38,23 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ length: 100, nullable: true }),
     __metadata("design:type", String)
-], User.prototype, "nom", void 0);
+], User.prototype, "pseudo", void 0);
 __decorate([
     (0, typeorm_1.Column)({ length: 100, nullable: true }),
     __metadata("design:type", String)
-], User.prototype, "prenom", void 0);
+], User.prototype, "bio", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "photoDeProfil", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ length: 100, nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "name", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ length: 100, nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "firstName", void 0);
 __decorate([
     (0, typeorm_1.Column)({ length: 100, unique: true }),
     __metadata("design:type", String)
@@ -47,7 +62,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], User.prototype, "mot_de_passe", void 0);
+], User.prototype, "password", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'enum', enum: Role, default: Role.CITOYEN }),
     __metadata("design:type", String)

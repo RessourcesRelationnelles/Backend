@@ -7,7 +7,16 @@ export class UserUpdateDto {
   email?: string;
 
   @ApiProperty({ required: false })
-  mot_de_passe?: string;
+  pseudo?: string;
+
+  @ApiProperty({ required: false })
+  bio?: string;
+
+  @ApiProperty({ required: false })
+  photoDeProfil?: string;
+
+  @ApiProperty()
+  password: string;
 
   @ApiProperty({ required: false })
   nom?: string;

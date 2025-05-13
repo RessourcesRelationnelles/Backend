@@ -36,8 +36,9 @@ let UserController = class UserController {
         }
         return user;
     }
-    async update(id, body) {
-        const updatedUser = await this.userService.update(id, body);
+    async updateMe(req, body) {
+        const userId = req.user.sub;
+        const updatedUser = await this.userService.update(userId, body);
         if (!updatedUser) {
             throw new common_1.NotFoundException("Impossible de mettre à jour l'utilisateur");
         }
@@ -74,14 +75,15 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "findByEmail", null);
 __decorate([
-    (0, common_1.Put)(':id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Mettre à jour un utilisateur avec son ID' }),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Put)('me'),
+    (0, swagger_1.ApiOperation)({ summary: 'Mettre à jour les infos de mon compte' }),
+    __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, user_dto_1.UserUpdateDto]),
+    __metadata("design:paramtypes", [Object, user_dto_1.UserUpdateDto]),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "update", null);
+], UserController.prototype, "updateMe", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Supprimer un utilisateur avec son ID' }),

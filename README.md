@@ -20,14 +20,15 @@ API REST construite avec **NestJS**, connectée à une base de données **MySQL*
 - [Docker & Docker Compose](https://docs.docker.com/get-docker/)
 - (Facultatif) [Node.js >= 18](https://nodejs.org/) si tu veux lancer hors Docker
 
+
 ---
 
 ## ⚙️ Lancer le projet avec Docker
 
 ```bash
 # Cloner le projet
-git clone https://github.com/ton-utilisateur/ressources-backend.git
-cd ressources-backend
+git clone https://azure.
+cd Backend
 
 # Lancer les conteneurs (API + MySQL)
 docker-compose up --build

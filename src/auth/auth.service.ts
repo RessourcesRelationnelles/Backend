@@ -16,8 +16,8 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.userRepo.findOne({ where: { email } });
-    if (user && await bcryptjs.compare(pass, user.mot_de_passe)) {
-      const { mot_de_passe, ...result } = user;
+    if (user && await bcryptjs.compare(pass, user.password)) {
+      const { password, ...result } = user;
       return result;
     }
     return null;
@@ -30,12 +30,32 @@ export class AuthService {
     };
   }
 
+  generateToken(user: User) {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      name: user.name,
+    };
+  
+    return this.jwtService.sign(payload);
+  }  
+
   async register(data: Partial<User>) {
-    if (!data.mot_de_passe) {
+    if (!data.password) {
       throw new Error('Password is required');
     }
-    const hashed = await bcryptjs.hash(data.mot_de_passe, 10);
-    const user = this.userRepo.create({ ...data, mot_de_passe: hashed });
-    return this.userRepo.save(user);
-  }
+
+    const existingUser = await this.userRepo.findOne({ where: { email: data.email } });
+    if (existingUser) {
+      throw new Error('Email already exists');
+    }
+  
+    const hashed = await bcryptjs.hash(data.password, 10);
+    const user = this.userRepo.create({ ...data, password: hashed });
+    const savedUser = await this.userRepo.save(user);
+  
+    const access_token = this.generateToken(savedUser);
+  
+    return { access_token };
+  }  
 }
