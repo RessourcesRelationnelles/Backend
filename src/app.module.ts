@@ -4,6 +4,10 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
+import { Ressource } from './ressource/ressource.entity';
+import { RessourceModule } from './ressource/ressource.module';
+import { CommentaireModule } from './commentaire/commentaire.module';
+import { Commentaire } from './commentaire/commentaire.entity';
 
 @Module({
   imports: [
@@ -15,12 +19,14 @@ import { User } from './user/user.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User],
+      entities: [User, Ressource, Commentaire],
       synchronize: true,
       autoLoadEntities: true
     }),
     AuthModule,
     UserModule,
+    RessourceModule,
+    CommentaireModule,
   ],
 })
 export class AppModule {}

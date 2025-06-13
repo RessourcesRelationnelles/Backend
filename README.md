@@ -27,7 +27,7 @@ API REST construite avec **NestJS**, connectée à une base de données **MySQL*
 
 ```bash
 # Cloner le projet
-git clone https://azure.
+gh repo clone https://github.com/RessourcesRelationnelles/Backend.git
 cd Backend
 
 # Lancer les conteneurs (API + MySQL)

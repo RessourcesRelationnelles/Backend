@@ -1,0 +1,29 @@
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { User } from '../user/user.entity';
+import { Commentaire } from '../commentaire/commentaire.entity';
+
+
+@Entity('Ressources')
+export class Ressource {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  titre: string;
+
+  @Column()
+  description: string;
+
+  @CreateDateColumn()
+  date: Date;
+
+  @ManyToOne(() => User, { eager: true })
+  auteur: User;
+
+  @Column({ type: 'int', default: 0 })
+  likes: number;
+
+  @OneToMany(() => Commentaire, commentaire => commentaire.ressource, { cascade: true })
+  commentaires: Commentaire[];
+
+}

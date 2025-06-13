@@ -8,14 +8,6 @@ export class AuthRegisterDto {
   @ApiProperty()
   password: string;
 
-  @ApiProperty({ required: false })
-  name?: string;
-
-  @ApiProperty({ required: false })
-  firstName?: string;
-
-  @ApiProperty({ enum: Role, required: false, default: Role.CITOYEN })
-  role?: Role;
 }
 
 export class AuthLoginDto {
@@ -25,4 +17,4 @@ export class AuthLoginDto {
     @ApiProperty()
     password: string;
   }
-  
+

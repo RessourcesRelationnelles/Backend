@@ -16,11 +16,16 @@ export class UserController {
         return this.userService.findAll();
     }
 
-    @ApiBearerAuth()
+   @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @Get('me')
-    getProfile(@Req() req) {
-        return req.user; 
+    async getProfile(@Req() req) {
+        const userId = req.user.id;
+        const user = await this.userService.findById(userId);
+        if (!user) {
+            throw new NotFoundException('Utilisateur non trouvé');
+        }
+        return user;
     }
 
 
@@ -34,11 +39,15 @@ export class UserController {
         return user;
     }
     
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @Put('me')
     @ApiOperation({ summary: 'Mettre à jour les infos de mon compte' })
-    async updateMe(@Req() req, @Body() body: UserUpdateDto) {
-    const userId = req.user.sub; // <-- JWT contient le user ID
+    async update(@Req() req, @Body() body: UserUpdateDto) {
+    const userId = req.user.id;
+    if ('role' in body) {
+        delete body.role;
+    }
     const updatedUser = await this.userService.update(userId, body);
 
     if (!updatedUser) {
@@ -49,9 +58,16 @@ export class UserController {
     }
 
 
-    @Delete(':id')
-    @ApiOperation({ summary: 'Supprimer un utilisateur avec son ID' })
-    remove(@Param('id', ParseIntPipe) id: number) {
-        return this.userService.remove(id);
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Delete('email/:email')
+    @ApiOperation({ summary: 'Supprimer un utilisateur avec son email' })
+    async removeByEmail(@Req() req, @Param('email') email: string) {
+        const userId = req.user.id;
+        const user = await this.userService.findById(userId);
+        if (!user || (user.role !== 'administrateur' && user.role !== 'super-administrateur')) {
+            throw new NotFoundException('Accès refusé : rôle insuffisant');
+        }
+        return this.userService.remove(email);
     }
 }
