@@ -8,6 +8,12 @@ export class AuthRegisterDto {
   @ApiProperty()
   password: string;
 
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  firstName: string;
+
 }
 
 export class AuthLoginDto {
