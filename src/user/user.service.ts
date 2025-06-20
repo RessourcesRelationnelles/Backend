@@ -45,5 +45,15 @@ export class UserService {
   return this.userRepository.delete({ email });
   }
 
+  async removeById(id: string): Promise<any> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+        throw new NotFoundException('Utilisateur non trouvé');
+    }
+    await this.userRepository.delete({ id });
+    return { message: 'Compte supprimé avec succès.' };
+}
+
+
 
 }

@@ -70,4 +70,20 @@ export class UserController {
         }
         return this.userService.remove(email);
     }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Delete('me')
+    @ApiOperation({ summary: 'Supprimer son propre compte' })
+    async deleteMe(@Req() req) {
+        const userId = req.user.id;
+
+        const user = await this.userService.findById(userId);
+        if (!user) {
+            throw new NotFoundException('Utilisateur non trouvé');
+        }
+
+        return this.userService.removeById(userId);
+    }
+
 }
