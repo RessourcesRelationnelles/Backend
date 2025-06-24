@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Commentaire } from '../commentaire/commentaire.entity';
 
@@ -26,4 +26,7 @@ export class Ressource {
   @OneToMany(() => Commentaire, commentaire => commentaire.ressource, { cascade: true })
   commentaires: Commentaire[];
 
+  @ManyToMany(() => User, { eager: true })
+  @JoinTable()
+  likedBy: User[];
 }

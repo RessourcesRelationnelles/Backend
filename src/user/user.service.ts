@@ -36,6 +36,11 @@ export class UserService {
       throw new NotFoundException('Utilisateur non trouvé');
     }
 
+    if (userData.password) {
+      const bcryptjs = await import('bcryptjs');
+      userData.password = await bcryptjs.hash(userData.password, 10);
+    }
+
     Object.assign(user, userData);
     return this.userRepository.save(user);
   }

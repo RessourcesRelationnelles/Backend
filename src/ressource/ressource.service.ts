@@ -32,9 +32,25 @@ export class RessourceService {
     return this.ressourceRepository.save(ressource);
   }
 
-  async like(id: string) {
-    const ressource = await this.findOne(id);
-    ressource.likes += 1;
+  async like(id: string, userId: string) {
+    const ressource = await this.ressourceRepository.findOne({
+      where: { id },
+      relations: ['likedBy'],
+    });
+    if (!ressource) throw new NotFoundException('Ressource non trouvée');
+
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Utilisateur non trouvé');
+
+    if (!ressource.likedBy) ressource.likedBy = [];
+    const index = ressource.likedBy.findIndex(u => u.id === userId);
+    if (index > -1) {
+      ressource.likedBy.splice(index, 1);
+      ressource.likes = Math.max(ressource.likes - 1, 0);
+    } else {
+      ressource.likedBy.push(user);
+      ressource.likes += 1;
+    }
     return this.ressourceRepository.save(ressource);
   }
 
