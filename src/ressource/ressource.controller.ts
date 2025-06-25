@@ -51,4 +51,11 @@ export class RessourceController {
     share(@Param('id') id: string, @Body() dto: ShareRessourceDto) {
     return this.ressourceService.share(id, dto.userId, dto.destinataireId);
     }
+
+    @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('suivis')
+  async getRessourcesFromFollowed(@Req() req) {
+    return this.ressourceService.findByFollowedUsers(req.user.id);
+  }
 }

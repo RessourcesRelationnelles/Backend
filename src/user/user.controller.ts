@@ -121,4 +121,26 @@ export class UserController {
         return this.userService.createAdmin(body);
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Post(':id/suivre')
+    async followOrUnfollow(@Req() req, @Param('id') id: string) {
+        const userId = req.user.id;
+        return this.userService.followOrUnfollow(userId, id);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Get(':id/abonnements')
+    async getFollowing(@Param('id') id: string) {
+        return this.userService.getFollowing(id);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Get(':id/abonnes')
+    async getFollowers(@Param('id') id: string) {
+        return this.userService.getFollowers(id);
+    }
+
 }

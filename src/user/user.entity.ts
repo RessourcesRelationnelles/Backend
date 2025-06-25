@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 
 export enum Role {
   CITOYEN = 'citoyen',
@@ -41,5 +41,16 @@ export class User {
 
   @Column({ default: true })
   is_active: boolean;
+
+  @ManyToMany(() => User, user => user.following)
+  @JoinTable({
+    name: 'user_followers',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'follower_id', referencedColumnName: 'id' },
+  })
+  followers: User[];
+
+  @ManyToMany(() => User, user => user.followers)
+  following: User[];
 
 }

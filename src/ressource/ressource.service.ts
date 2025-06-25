@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Ressource } from './ressource.entity';
 import { CreateRessourceDto, CommentRessourceDto } from './ressource.dto';
 import { User } from '../user/user.entity';
@@ -70,6 +70,17 @@ export class RessourceService {
   return this.commentaireRepo.save(commentaire);
 }
 
+  async findByFollowedUsers(userId: string) {
+    const user = await this.userRepo.findOne({ where: { id: userId }, relations: ['following'] });
+    if (!user) throw new NotFoundException('Utilisateur non trouvé');
+    const followedIds = user.following.map(u => u.id);
+    if (followedIds.length === 0) return [];
+    return this.ressourceRepository.find({
+      where: { auteur: { id: In(followedIds) } },
+      relations: ['auteur', 'commentaires', 'likedBy'],
+      order: { date: 'DESC' },
+    });
+  }
 
   async share(id: string, userId: string, destinataireId?: string) {
     const lienPartage = `https://app.com/ressources/${id}`;

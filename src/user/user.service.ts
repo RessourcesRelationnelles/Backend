@@ -75,8 +75,39 @@ export class UserService {
     }
     await this.userRepository.delete({ id });
     return { message: 'Compte supprimé avec succès.' };
-}
+  }
 
+  async followOrUnfollow(currentUserId: string, targetUserId: string): Promise<{ message: string }> {
+    if (currentUserId === targetUserId) {
+      return { message: "Vous ne pouvez pas vous suivre vous-même." };
+    }
+    const currentUser = await this.userRepository.findOne({ where: { id: currentUserId }, relations: ['following'] });
+    const targetUser = await this.userRepository.findOne({ where: { id: targetUserId } });
+    if (!currentUser || !targetUser) {
+      throw new NotFoundException('Utilisateur non trouvé');
+    }
+    const isFollowing = currentUser.following.some(u => u.id === targetUserId);
+    if (isFollowing) {
+      currentUser.following = currentUser.following.filter(u => u.id !== targetUserId);
+      await this.userRepository.save(currentUser);
+      return { message: 'Désabonnement réussi.' };
+    } else {
+      currentUser.following.push(targetUser);
+      await this.userRepository.save(currentUser);
+      return { message: 'Abonnement réussi.' };
+    }
+  }
 
+  async getFollowing(userId: string): Promise<Partial<User>[]> {
+    const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['following'] });
+    if (!user) throw new NotFoundException('Utilisateur non trouvé');
+    return user.following.map(u => ({ id: u.id, name: u.name, firstName: u.firstName, photoDeProfil: u.photoDeProfil }));
+  }
+
+  async getFollowers(userId: string): Promise<Partial<User>[]> {
+    const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['followers'] });
+    if (!user) throw new NotFoundException('Utilisateur non trouvé');
+    return user.followers.map(u => ({ id: u.id, name: u.name, firstName: u.firstName, photoDeProfil: u.photoDeProfil }));
+  }
 
 }
