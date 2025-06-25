@@ -45,6 +45,24 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
+  async setActiveStatus(id: string, isActive: boolean): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('Utilisateur non trouvé');
+    }
+    user.is_active = isActive;
+    return this.userRepository.save(user);
+  }
+
+  async createAdmin(userData: Partial<User>): Promise<User> {
+    if (userData.password) {
+      const bcryptjs = await import('bcryptjs');
+      userData.password = await bcryptjs.hash(userData.password, 10);
+    }
+    const user = this.userRepository.create(userData);
+    return this.userRepository.save(user);
+  }
+
 
   remove(email: string) {
   return this.userRepository.delete({ email });

@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put, NotFoundException, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put, NotFoundException, UseGuards, Req, ForbiddenException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiResponse, ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
-import { UserUpdateDto } from './user.dto';
+import { UserUpdateDto, UserAdminCreateDto } from './user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Role } from './user.entity';
 
 @ApiTags('users')
 @Controller('users')
@@ -84,6 +85,40 @@ export class UserController {
         }
 
         return this.userService.removeById(userId);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Patch(':id/toggle')
+    @ApiOperation({ summary: 'Activer ou désactiver un compte utilisateur (toggle)' })
+    async toggleActiveStatus(@Req() req, @Param('id') id: string) {
+        const user = await this.userService.findById(req.user.id);
+        if (!user || (user.role !== Role.ADMINISTRATEUR && user.role !== Role.SUPER_ADMINISTRATEUR)) {
+            throw new ForbiddenException('Accès refusé : rôle insuffisant');
+        }
+        if (req.user.id === id) {
+            throw new ForbiddenException('Vous ne pouvez pas désactiver ou activer votre propre compte.');
+        }
+        const targetUser = await this.userService.findById(id);
+        if (!targetUser) {
+            throw new NotFoundException('Utilisateur cible non trouvé');
+        }
+        return this.userService.setActiveStatus(id, !targetUser.is_active);
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Post('admin')
+    @ApiOperation({ summary: 'Créer un compte modérateur/administrateur/super-administrateur (super-admin seulement)' })
+    async createAdmin(@Req() req, @Body() body: UserAdminCreateDto) {
+        const user = await this.userService.findById(req.user.id);
+        if (!user || user.role !== Role.SUPER_ADMINISTRATEUR) {
+            throw new ForbiddenException('Accès refusé : super-administrateur requis');
+        }
+        if (![Role.MODERATEUR, Role.ADMINISTRATEUR, Role.SUPER_ADMINISTRATEUR].includes(body.role)) {
+            throw new ForbiddenException('Rôle non autorisé');
+        }
+        return this.userService.createAdmin(body);
     }
 
 }

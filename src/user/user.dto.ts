@@ -25,4 +25,31 @@ export class UserUpdateDto {
 
   @ApiProperty({ enum: Role, required: false })
   role?: Role;
+
+}
+
+export class UserAdminCreateDto {
+  @ApiProperty()
+  pseudo?: string;
+
+  @ApiProperty()
+  bio?: string;
+
+  @ApiProperty()
+  photoDeProfil?: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  firstName: string;
+
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  password: string;
+
+  @ApiProperty({ enum: Role })
+  role: Role;
 }
