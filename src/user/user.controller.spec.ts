@@ -21,11 +21,15 @@ describe('UserController', () => {
     password: 'hashedpassword',
     role: Role.CITOYEN,
     dateCreation: new Date(),
+    is_active: false,
+    followers: [],
+    following: []
   };
 
   const mockRequest = {
     user: {
       sub: 'uuid-123',
+      id: 'uuid-123', // Ajouté pour correspondre à l'appel du contrôleur
       email: 'john.doe@example.com',
       role: Role.CITOYEN,
     },
@@ -35,8 +39,12 @@ describe('UserController', () => {
     userService = {
       findAll: jest.fn().mockResolvedValue([mockUser]),
       findByString: jest.fn(),
+      findById: jest.fn(), 
       update: jest.fn(),
       remove: jest.fn().mockResolvedValue({ affected: 1 }),
+      followOrUnfollow: jest.fn(),
+      getFollowing: jest.fn(),
+      getFollowers: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -82,9 +90,12 @@ describe('UserController', () => {
   });
 
   describe('getProfile', () => {
-    it('should return the user from request', () => {
-      const result = controller.getProfile(mockRequest as any);
-      expect(result).toEqual(mockRequest.user);
+    it('should return the user from request', async () => {
+      userService.findById!.mockResolvedValue(mockUser);
+      const req = { user: { id: mockUser.id } };
+      const result = await controller.getProfile(req as any);
+      expect(userService.findById).toHaveBeenCalledWith(mockUser.id);
+      expect(result).toEqual(mockUser);
     });
   });
 
@@ -92,8 +103,7 @@ describe('UserController', () => {
     it('should update the user info', async () => {
       const updateDto: UserUpdateDto = { bio: 'Nouvelle bio', password: 'newpassword' };
       userService.update!.mockResolvedValue({ affected: 1 });
-
-      const result = await controller.updateMe(mockRequest as any, updateDto);
+      const result = await controller.update(mockRequest as any, updateDto);
       expect(userService.update).toHaveBeenCalledWith('uuid-123', updateDto);
       expect(result).toEqual({ affected: 1 });
     });
@@ -102,16 +112,48 @@ describe('UserController', () => {
       userService.update!.mockResolvedValue(null);
 
       await expect(
-        controller.updateMe(mockRequest as any, { bio: 'fail', password: 'dummy' }),
+        controller.update(mockRequest as any, { bio: 'fail', password: 'dummy' }),
       ).rejects.toThrow(NotFoundException);
     });
   });
 
-  describe('remove', () => {
-    it('should call userService.remove with correct ID', async () => {
-      const result = await controller.remove(1);
-      expect(userService.remove).toHaveBeenCalledWith(1);
-      expect(result).toEqual({ affected: 1 });
+  describe('removeByEmail', () => {
+  it('should call userService.remove with correct email', async () => {
+    userService.findById!.mockResolvedValue({ ...mockUser, role: Role.ADMINISTRATEUR });
+    const req = { user: { id: mockUser.id, role: Role.ADMINISTRATEUR } };
+    const result = await controller.removeByEmail(req as any, mockUser.email);
+    expect(userService.remove).toHaveBeenCalledWith(mockUser.email);
+    expect(result).toEqual({ affected: 1 });
+    });
+  });
+
+  describe('followOrUnfollow', () => {
+    it('should call userService.followOrUnfollow and return message', async () => {
+      userService.followOrUnfollow = jest.fn().mockResolvedValue({ message: 'Abonnement réussi.' });
+      const req = { user: { id: 'uuid-123' } };
+      const result = await controller.followOrUnfollow(req as any, 'target-id');
+      expect(userService.followOrUnfollow).toHaveBeenCalledWith('uuid-123', 'target-id');
+      expect(result).toEqual({ message: 'Abonnement réussi.' });
+    });
+  });
+
+  describe('getFollowing', () => {
+    it('should return following users', async () => {
+      const following = [{ id: '2', name: 'A', firstName: 'B', photoDeProfil: 'x.jpg' }];
+      userService.getFollowing = jest.fn().mockResolvedValue(following);
+      const result = await controller.getFollowing('uuid-123');
+      expect(userService.getFollowing).toHaveBeenCalledWith('uuid-123');
+      expect(result).toEqual(following);
+    });
+  });
+
+  describe('getFollowers', () => {
+    it('should return followers users', async () => {
+      const followers = [{ id: '2', name: 'A', firstName: 'B', photoDeProfil: 'x.jpg' }];
+      userService.getFollowers = jest.fn().mockResolvedValue(followers);
+      const result = await controller.getFollowers('uuid-123');
+      expect(userService.getFollowers).toHaveBeenCalledWith('uuid-123');
+      expect(result).toEqual(followers);
     });
   });
 });

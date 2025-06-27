@@ -42,6 +42,9 @@ describe('UserService', () => {
     password: 'hashedpassword',
     role: Role.CITOYEN,
     dateCreation: new Date(),
+    is_active: false,
+    followers: [],
+    following: []
   };
 
   describe('create', () => {
@@ -79,21 +82,74 @@ describe('UserService', () => {
   describe('update', () => {
     it('should update a user', async () => {
       const updateData = { bio: 'Nouvelle bio' };
-      (repository.update as jest.Mock).mockResolvedValue({ affected: 1, generatedMaps: [], raw: [] });
+      (repository.findOne as jest.Mock).mockResolvedValue({ ...mockUser });
+      (repository.save as jest.Mock).mockResolvedValue({ ...mockUser, ...updateData });
 
-      const result = await service.update(mockUser.id as any, updateData);
-      expect(repository.update).toHaveBeenCalledWith(mockUser.id, updateData);
-      expect(result).toEqual({ affected: 1, generatedMaps: [], raw: [] });
+      const result = await service.update(mockUser.id, updateData);
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: mockUser.id } });
+      expect(repository.save).toHaveBeenCalledWith({ ...mockUser, ...updateData });
+      expect(result).toEqual({ ...mockUser, ...updateData });
     });
   });
 
   describe('remove', () => {
-    it('should delete a user', async () => {
+    it('should delete a user by email', async () => {
       (repository.delete as jest.Mock).mockResolvedValue({ affected: 1, raw: [] });
-
-      const result = await service.remove(mockUser.id as any);
-      expect(repository.delete).toHaveBeenCalledWith(mockUser.id);
+      const result = await service.remove(mockUser.email);
+      expect(repository.delete).toHaveBeenCalledWith({ email: mockUser.email });
       expect(result).toEqual({ affected: 1, raw: [] });
+    });
+  });
+
+  describe('removeById', () => {
+    it('should delete a user by id', async () => {
+      (repository.findOne as jest.Mock).mockResolvedValue(mockUser);
+      (repository.delete as jest.Mock).mockResolvedValue({ affected: 1, raw: [] });
+      const result = await service.removeById(mockUser.id);
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: mockUser.id } });
+      expect(repository.delete).toHaveBeenCalledWith({ id: mockUser.id });
+      expect(result).toEqual({ message: 'Compte supprimé avec succès.' });
+    });
+  });
+
+  describe('followOrUnfollow', () => {
+    it('should follow a user', async () => {
+      const currentUser = { ...mockUser, following: [] };
+      const targetUser = { ...mockUser, id: 'target-id' };
+      (repository.findOne as jest.Mock)
+        .mockResolvedValueOnce(currentUser) // find current user
+        .mockResolvedValueOnce(targetUser); // find target user
+      (repository.save as jest.Mock).mockResolvedValue({ ...currentUser, following: [targetUser] });
+      const result = await service.followOrUnfollow(currentUser.id, targetUser.id);
+      expect(result).toEqual({ message: 'Abonnement réussi.' });
+    });
+    it('should unfollow a user', async () => {
+      const targetUser = { ...mockUser, id: 'target-id' };
+      const currentUser = { ...mockUser, following: [targetUser] };
+      (repository.findOne as jest.Mock)
+        .mockResolvedValueOnce(currentUser)
+        .mockResolvedValueOnce(targetUser);
+      (repository.save as jest.Mock).mockResolvedValue({ ...currentUser, following: [] });
+      const result = await service.followOrUnfollow(currentUser.id, targetUser.id);
+      expect(result).toEqual({ message: 'Désabonnement réussi.' });
+    });
+  });
+
+  describe('getFollowing', () => {
+    it('should return following users', async () => {
+      const following = [{ id: '2', name: 'A', firstName: 'B', photoDeProfil: 'x.jpg' }];
+      (repository.findOne as jest.Mock).mockResolvedValue({ ...mockUser, following });
+      const result = await service.getFollowing(mockUser.id);
+      expect(result).toEqual(following);
+    });
+  });
+
+  describe('getFollowers', () => {
+    it('should return followers users', async () => {
+      const followers = [{ id: '2', name: 'A', firstName: 'B', photoDeProfil: 'x.jpg' }];
+      (repository.findOne as jest.Mock).mockResolvedValue({ ...mockUser, followers });
+      const result = await service.getFollowers(mockUser.id);
+      expect(result).toEqual(followers);
     });
   });
 });

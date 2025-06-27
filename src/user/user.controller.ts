@@ -8,6 +8,7 @@ import { Role } from './user.entity';
 @ApiTags('users')
 @Controller('users')
 export class UserController {
+  remove: any;
     constructor(private readonly userService: UserService) { }
 
     @Get()

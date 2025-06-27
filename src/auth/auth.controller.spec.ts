@@ -5,26 +5,21 @@ import { UnauthorizedException } from '@nestjs/common';
 
 describe('AuthController', () => {
   let controller: AuthController;
-  let authService: AuthService;
-
-  const mockAuthService = {
-    validateUser: jest.fn(),
-    login: jest.fn(),
-    register: jest.fn(),
-  };
+  let service: Partial<Record<keyof AuthService, jest.Mock>>;
 
   beforeEach(async () => {
+    service = {
+      validateUser: jest.fn(),
+      login: jest.fn(),
+      register: jest.fn(),
+    };
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
-        { provide: AuthService, useValue: mockAuthService },
+        { provide: AuthService, useValue: service },
       ],
     }).compile();
-
     controller = module.get<AuthController>(AuthController);
-    authService = module.get<AuthService>(AuthService);
-
-    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -36,35 +31,29 @@ describe('AuthController', () => {
       const dto = { email: 'test@mail.com', password: 'pass' };
       const user = { id: 1, email: dto.email };
       const loginResult = { access_token: 'token' };
-
-      mockAuthService.validateUser.mockResolvedValue(user);
-      mockAuthService.login.mockReturnValue(loginResult);
-
+      (service.validateUser as jest.Mock).mockResolvedValue(user);
+      (service.login as jest.Mock).mockReturnValue(loginResult);
       const result = await controller.login(dto);
       expect(result).toEqual(loginResult);
-      expect(mockAuthService.validateUser).toHaveBeenCalledWith(dto.email, dto.password);
-      expect(mockAuthService.login).toHaveBeenCalledWith(user);
+      expect(service.validateUser).toHaveBeenCalledWith(dto.email, dto.password);
+      expect(service.login).toHaveBeenCalledWith(user);
     });
-
     it('should throw UnauthorizedException if user is invalid', async () => {
       const dto = { email: 'wrong@mail.com', password: 'wrong' };
-      mockAuthService.validateUser.mockResolvedValue(null);
-
+      (service.validateUser as jest.Mock).mockResolvedValue(null);
       await expect(controller.login(dto)).rejects.toThrow(UnauthorizedException);
-      expect(mockAuthService.validateUser).toHaveBeenCalledWith(dto.email, dto.password);
+      expect(service.validateUser).toHaveBeenCalledWith(dto.email, dto.password);
     });
   });
 
   describe('register', () => {
-    it('should call authService.register and return result', async () => {
-      const dto = { email: 'new@mail.com', password: 'pass', name: 'Test' };
-      const registerResult = { id: 2, email: dto.email };
-
-      mockAuthService.register.mockResolvedValue(registerResult);
-
+    it('should call service.register and return result', async () => {
+      const dto = { email: 'new@mail.com', password: 'pass', name: 'Test', firstName: 'Test' };
+      const registerResult = { access_token: 'token' };
+      (service.register as jest.Mock).mockResolvedValue(registerResult);
       const result = await controller.register(dto);
+      expect(service.register).toHaveBeenCalledWith(dto);
       expect(result).toEqual(registerResult);
-      expect(mockAuthService.register).toHaveBeenCalledWith(dto);
     });
   });
 });
