@@ -13,7 +13,7 @@ export class Commentaire {
   @CreateDateColumn()
   date: Date;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   auteur: User;
 
   @ManyToOne(() => Ressource, ressource => ressource.commentaires, { onDelete: 'CASCADE' })
