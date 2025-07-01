@@ -40,6 +40,9 @@ export class RessourceController {
     }
     return this.ressourceService.remove(id);
   }
+  
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Post(':id/like')
   like(@Param('id') id: string, @Req() req) {
     return this.ressourceService.like(id, req.user.id);
