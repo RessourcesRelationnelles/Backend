@@ -17,6 +17,9 @@ export class AuthService {
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.userRepo.findOne({ where: { email } });
     if (user && await bcryptjs.compare(pass, user.password)) {
+      if (user.is_active === false) {
+        throw new UnauthorizedException('Votre compte est désactivé, veuillez contacter un administrateur.');
+      }
       const { password, ...result } = user;
       return result;
     }

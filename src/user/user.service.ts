@@ -64,8 +64,13 @@ export class UserService {
   }
 
 
-  remove(email: string) {
-  return this.userRepository.delete({ email });
+  async remove(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException('Utilisateur non trouvé');
+    }
+    await this.userRepository.delete({ email });
+    return { message: 'Compte supprimé avec succès.' };
   }
 
   async removeById(id: string): Promise<any> {
