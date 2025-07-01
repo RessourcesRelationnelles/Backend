@@ -39,3 +39,15 @@ export class ShareRessourceDto {
   @IsUUID()
   destinataireId?: string;
 }
+
+export class UpdateRessourceDto {
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ required: false })
+  titre?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ required: false })
+  description?: string;
+}

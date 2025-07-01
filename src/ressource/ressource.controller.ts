@@ -1,9 +1,10 @@
 import {
-  Controller, Get, Post, Param, Body, UseGuards, Req
+  Controller, Get, Post, Param, Body, UseGuards, Req, Delete, ForbiddenException
 } from '@nestjs/common';
 import { RessourceService } from './ressource.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateRessourceDto, CommentRessourceDto, ShareRessourceDto } from './ressource.dto';
+import { Role } from '../user/user.entity';
 import { ApiResponse, ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 
 
@@ -31,6 +32,14 @@ export class RessourceController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async remove(@Param('id') id: string, @Req() req) {
+    const user = req.user;
+    if (![Role.ADMINISTRATEUR, Role.SUPER_ADMINISTRATEUR].includes(user.role)) {
+      throw new ForbiddenException('Accès réservé aux administrateurs.');
+    }
+    return this.ressourceService.remove(id);
+  }
   @Post(':id/like')
   like(@Param('id') id: string, @Req() req) {
     return this.ressourceService.like(id, req.user.id);
@@ -58,4 +67,35 @@ export class RessourceController {
   async getRessourcesFromFollowed(@Req() req) {
     return this.ressourceService.findByFollowedUsers(req.user.id);
   }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/toggle')
+  async toggle(@Param('id') id: string, @Req() req) {
+    const user = req.user;
+    if (![Role.ADMINISTRATEUR, Role.SUPER_ADMINISTRATEUR].includes(user.role)) {
+      throw new ForbiddenException('Accès réservé aux administrateurs.');
+    }
+    return this.ressourceService.toggle(id);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/update')
+  @ApiBody({ type: CreateRessourceDto })
+  async update(
+    @Param('id') id: string,
+    @Body() dto: { titre?: string; description?: string },
+    @Req() req
+  ) {
+    const user = req.user;
+    if (![Role.ADMINISTRATEUR, Role.SUPER_ADMINISTRATEUR].includes(user.role)) {
+      throw new ForbiddenException('Accès réservé aux administrateurs.');
+    }
+    if (!dto || typeof dto !== 'object' || !dto.titre || !dto.description) {
+      throw new ForbiddenException('Les champs titre et description sont obligatoires.');
+    }
+    return this.ressourceService.update(id, dto);
+  }
+  
 }

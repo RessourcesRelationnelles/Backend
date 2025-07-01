@@ -29,4 +29,7 @@ export class Ressource {
   @ManyToMany(() => User, { eager: true })
   @JoinTable()
   likedBy: User[];
+
+  @Column({ type: 'boolean', default: true })
+  is_active: boolean;
 }

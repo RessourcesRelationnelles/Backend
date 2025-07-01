@@ -90,4 +90,29 @@ export class RessourceService {
       destinataire: destinataireId || 'non précisé',
     };
   }
+
+  async remove(id: string) {
+    const ressource = await this.ressourceRepository.findOne({ where: { id } });
+    if (!ressource) throw new NotFoundException('Ressource non trouvée');
+    await this.ressourceRepository.remove(ressource);
+    return { message: 'Ressource supprimée avec succès' };
+  }
+
+  async toggle(id: string) {
+    const ressource = await this.ressourceRepository.findOne({ where: { id } });
+    if (!ressource) throw new NotFoundException('Ressource non trouvée');
+    ressource.is_active = !ressource.is_active;
+    await this.ressourceRepository.save(ressource);
+    return { message: `Ressource ${ressource.is_active ? 'activée' : 'désactivée'}` };
+  }
+
+  async update(id: string, dto: Partial<{ titre?: string; description?: string }>) {
+    const ressource = await this.ressourceRepository.findOne({ where: { id } });
+    if (!ressource) throw new NotFoundException('Ressource non trouvée');
+    if (dto.titre !== undefined) ressource.titre = dto.titre;
+    if (dto.description !== undefined) ressource.description = dto.description;
+    await this.ressourceRepository.save(ressource);
+    return { message: 'Ressource modifiée avec succès', ressource };
+  }
+  
 }
