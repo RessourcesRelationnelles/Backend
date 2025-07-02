@@ -42,7 +42,7 @@ export class User {
   @Column({ default: true })
   is_active: boolean;
 
-  @ManyToMany(() => User, user => user.following)
+  @ManyToMany(() => User, user => user.following, { onDelete: 'CASCADE' })
   @JoinTable({
     name: 'user_followers',
     joinColumn: { name: 'user_id', referencedColumnName: 'id' },
@@ -50,7 +50,7 @@ export class User {
   })
   followers: User[];
 
-  @ManyToMany(() => User, user => user.followers)
+  @ManyToMany(() => User, user => user.followers, { onDelete: 'CASCADE' })
   following: User[];
 
 }
