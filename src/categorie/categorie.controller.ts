@@ -3,6 +3,7 @@ import { CategorieService } from './categorie.service';
 import { CreateCategorieDto } from './categorie.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Role } from '../user/user.entity';
+import { ApiBearerAuth} from '@nestjs/swagger';
 
 @Controller('categories')
 export class CategorieController {
@@ -13,6 +14,7 @@ export class CategorieController {
     return this.categorieService.findAll();
   }
 
+  @ApiBearerAuth()
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Body() dto: CreateCategorieDto, @Req() req) {
