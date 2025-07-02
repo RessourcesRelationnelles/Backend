@@ -17,7 +17,7 @@ export class Ressource {
   @CreateDateColumn()
   date: Date;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   auteur: User;
 
   @Column({ type: 'int', default: 0 })
