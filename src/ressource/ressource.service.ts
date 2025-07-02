@@ -5,6 +5,7 @@ import { Ressource } from './ressource.entity';
 import { CreateRessourceDto, CommentRessourceDto } from './ressource.dto';
 import { User } from '../user/user.entity';
 import { Commentaire } from '../commentaire/commentaire.entity';
+import { Categorie } from '../categorie/categorie.entity';
 
 @Injectable()
 export class RessourceService {
@@ -15,6 +16,8 @@ export class RessourceService {
     private userRepo: Repository<User>,
     @InjectRepository(Commentaire)
     private commentaireRepo: Repository<Commentaire>,
+    @InjectRepository(Categorie)
+    private categorieRepo: Repository<Categorie>,
   ) {}
 
   findAll() {
@@ -28,7 +31,9 @@ export class RessourceService {
   }
 
   async create(dto: CreateRessourceDto, auteur: User) {
-    const ressource = this.ressourceRepository.create({ ...dto, auteur });
+    const categorie = await this.categorieRepo.findOne({ where: { id: dto.categorieId } });
+    if (!categorie) throw new NotFoundException('Catégorie non trouvée');
+    const ressource = this.ressourceRepository.create({ ...dto, auteur, categorie });
     return this.ressourceRepository.save(ressource);
   }
 

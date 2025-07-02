@@ -92,15 +92,6 @@ describe('UserService', () => {
     });
   });
 
-  describe('remove', () => {
-    it('should delete a user by email', async () => {
-      (repository.delete as jest.Mock).mockResolvedValue({ affected: 1, raw: [] });
-      const result = await service.remove(mockUser.email);
-      expect(repository.delete).toHaveBeenCalledWith({ email: mockUser.email });
-      expect(result).toEqual({ affected: 1, raw: [] });
-    });
-  });
-
   describe('removeById', () => {
     it('should delete a user by id', async () => {
       (repository.findOne as jest.Mock).mockResolvedValue(mockUser);

@@ -62,5 +62,4 @@ describe('RessourceService', () => {
     expect(result).toEqual(mockRessource);
   });
 
-  // Ajoute ici d'autres tests pour like, comment, share, findByFollowedUsers si besoin
 });

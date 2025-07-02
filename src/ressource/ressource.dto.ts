@@ -11,6 +11,11 @@ export class CreateRessourceDto {
   @IsString()
   @ApiProperty()
   description: string;
+
+  @IsNotEmpty()
+  @IsUUID()
+  @ApiProperty({ description: 'ID de la catégorie' })
+  categorieId: string;
 }
 
 export class LikeRessourceDto {

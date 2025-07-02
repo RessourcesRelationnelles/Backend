@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Commentaire } from '../commentaire/commentaire.entity';
+import { Categorie } from '../categorie/categorie.entity';
 
 
 @Entity('Ressources')
@@ -13,6 +14,9 @@ export class Ressource {
 
   @Column()
   description: string;
+
+  @ManyToOne(() => Categorie, categorie => categorie.ressources, { eager: true, onDelete: 'SET NULL', nullable: true })
+  categorie: Categorie;
 
   @CreateDateColumn()
   date: Date;
