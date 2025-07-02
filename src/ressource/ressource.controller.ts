@@ -88,7 +88,7 @@ export class RessourceController {
   @ApiBody({ type: CreateRessourceDto })
   async update(
     @Param('id') id: string,
-    @Body() dto: { titre?: string; description?: string },
+    @Body() dto: { titre?: string; description?: string, categorieId?: string },
     @Req() req
   ) {
     const user = req.user;
