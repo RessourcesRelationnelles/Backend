@@ -1,6 +1,8 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseGuards, Req, ForbiddenException } from '@nestjs/common';
 import { CategorieService } from './categorie.service';
 import { CreateCategorieDto } from './categorie.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Role } from '../user/user.entity';
 
 @Controller('categories')
 export class CategorieController {
@@ -12,7 +14,12 @@ export class CategorieController {
   }
 
   @Post()
-  create(@Body() dto: CreateCategorieDto) {
+  @UseGuards(JwtAuthGuard)
+  create(@Body() dto: CreateCategorieDto, @Req() req) {
+    const user = req.user;
+    if (![Role.ADMINISTRATEUR, Role.SUPER_ADMINISTRATEUR].includes(user.role)) {
+      throw new ForbiddenException('Accès réservé aux administrateurs.');
+    }
     return this.categorieService.create(dto);
   }
 }
