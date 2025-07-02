@@ -111,11 +111,16 @@ export class RessourceService {
     return { message: `Ressource ${ressource.is_active ? 'activée' : 'désactivée'}` };
   }
 
-  async update(id: string, dto: Partial<{ titre?: string; description?: string }>) {
-    const ressource = await this.ressourceRepository.findOne({ where: { id } });
+  async update(id: string, dto: Partial<{ titre?: string; description?: string; categorieId?: string }>) {
+    const ressource = await this.ressourceRepository.findOne({ where: { id }, relations: ['categorie'] });
     if (!ressource) throw new NotFoundException('Ressource non trouvée');
     if (dto.titre !== undefined) ressource.titre = dto.titre;
     if (dto.description !== undefined) ressource.description = dto.description;
+    if (dto.categorieId !== undefined) {
+      const categorie = await this.categorieRepo.findOne({ where: { id: dto.categorieId } });
+      if (!categorie) throw new NotFoundException('Catégorie non trouvée');
+      ressource.categorie = categorie;
+    }
     await this.ressourceRepository.save(ressource);
     return { message: 'Ressource modifiée avec succès', ressource };
   }
