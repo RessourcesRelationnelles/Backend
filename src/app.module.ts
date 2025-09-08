@@ -45,6 +45,25 @@ const typeOrmConfig = useDatabaseUrl
           : undefined,
     };
 
+// Debug: print non-sensitive DB connection info to help diagnose failures (will not print passwords)
+try {
+  let debugInfo = 'DB config: ';
+  if (process.env.DATABASE_URL) {
+    try {
+      const u = new URL(process.env.DATABASE_URL);
+      debugInfo += `using DATABASE_URL host=${u.hostname} port=${u.port || '3306'} user=${u.username} db=${u.pathname?.replace('/', '')}`;
+    } catch (e) {
+      debugInfo += 'DATABASE_URL present but not parseable';
+    }
+  } else {
+    debugInfo += `host=${process.env.DB_HOST || 'unset'} port=${process.env.DB_PORT || 'unset'} user=${process.env.DB_USER || 'unset'} db=${process.env.DB_NAME || 'unset'}`;
+  }
+  // eslint-disable-next-line no-console
+  console.log('[DB DEBUG]', debugInfo);
+} catch (err) {
+  // ignore debug logging errors
+}
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
