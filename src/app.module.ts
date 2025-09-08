@@ -19,7 +19,7 @@ const useDatabaseUrl = !!process.env.DATABASE_URL;
 const typeOrmConfig = useDatabaseUrl
   ? {
       type: 'mysql' as const,
-      url: process.env.DB_DATABASE_URL,
+      url: process.env.DATABASE_URL,
       entities: [User, Ressource, Commentaire],
       synchronize: typeormSynchronize,
       autoLoadEntities: true,
