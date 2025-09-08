@@ -72,6 +72,11 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          # GitHub repository can contain uppercase letters; Docker tags must be lowercase.
-          # Create a lowercase image name and use it here.
-          tags: ghcr.io/${{ toLower(github.repository) }}:latest
+          # Use precomputed lowercase IMAGE_NAME (set in previous step) to avoid invalid tag errors
+          tags: ghcr.io/${{ env.IMAGE_NAME }}:latest
+
+      - name: Prepare lowercase image name
+        if: always()
+        run: |
+          # compute lowercase repository name like owner/repo and export to GITHUB_ENV
+          echo "IMAGE_NAME=$(echo \"${GITHUB_REPOSITORY}\" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
