@@ -52,7 +52,7 @@ try {
     try {
       const u = new URL(process.env.DATABASE_URL);
       debugInfo += `using DATABASE_URL host=${u.hostname} port=${u.port || '3306'} user=${u.username} db=${u.pathname?.replace('/', '')}`;
-    } catch (e) {
+    } catch {
       debugInfo += 'DATABASE_URL present but not parseable';
     }
   } else {
@@ -60,7 +60,7 @@ try {
   }
   // eslint-disable-next-line no-console
   console.log('[DB DEBUG]', debugInfo);
-} catch (err) {
+} catch {
   // ignore debug logging errors
 }
 
