@@ -65,6 +65,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Prepare lowercase image name
+        run: |
+          # compute lowercase repository name like owner/repo and export to GITHUB_ENV
+          IMAGE_NAME=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
+          echo "Computed IMAGE_NAME=${IMAGE_NAME}"
 
       - name: Build and push Docker image to GHCR
         uses: docker/build-push-action@v4
@@ -74,9 +80,3 @@ jobs:
           push: true
           # Use precomputed lowercase IMAGE_NAME (set in previous step) to avoid invalid tag errors
           tags: ghcr.io/${{ env.IMAGE_NAME }}:latest
-
-      - name: Prepare lowercase image name
-        if: always()
-        run: |
-          # compute lowercase repository name like owner/repo and export to GITHUB_ENV
-          echo "IMAGE_NAME=$(echo \"${GITHUB_REPOSITORY}\" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
