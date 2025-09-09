@@ -80,3 +80,44 @@ jobs:
           push: true
           # Use precomputed lowercase IMAGE_NAME (set in previous step) to avoid invalid tag errors
           tags: ghcr.io/${{ env.IMAGE_NAME }}:latest
+
+  bandit:
+    name: Run Bandit (Python security scan)
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit and save JSON report
+        run: |
+          # scan the repo (change '.' to the Python folder if needed)
+          bandit -r . --severity-level MEDIUM -f json -o bandit-report.json || true
+
+      - name: Fail if Bandit found issues
+        run: |
+          python - <<'PY'
+import json,sys,os
+p='bandit-report.json'
+if os.path.exists(p):
+    r=json.load(open(p))
+    if r.get('results'):
+        print(f"Bandit found {len(r['results'])} issues (severity >= MEDIUM).")
+        sys.exit(1)
+print('No Bandit issues (severity >= MEDIUM).')
+sys.exit(0)
+PY
+
+      - name: Upload Bandit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json
